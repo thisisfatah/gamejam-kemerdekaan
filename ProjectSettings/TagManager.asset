@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Gate
+  - Enemy
+  - Red
+  - White
+  - Boss
+  - MiniBoss
   layers:
   - Default
   - TransparentFX
@@ -11,7 +17,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Terrain
   - 
   - 
   - 
@@ -38,6 +44,12 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 3758630379
+    locked: 0
+  - name: Object
+    uniqueID: 95402697
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
