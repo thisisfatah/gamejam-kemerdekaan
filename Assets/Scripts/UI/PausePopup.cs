@@ -17,6 +17,7 @@ public class PausePopup : Popup
 
 	public void Quit()
 	{
+		Time.timeScale = 1;
 		Transition.LoadLevel("MenuScene", 1.0f, Color.black);
 	}
 }

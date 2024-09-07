@@ -15,10 +15,10 @@ public class GameOverPopUp : Popup
 
 	private void Update()
     {
-        if (Input.anyKeyDown)
+       /* if (Input.anyKeyDown)
         {
             AudioManager.Instance.StopSound("DarkForest");
             Transition.LoadLevel("MenuScene", 1.0f, Color.black);
-        }
+        }*/
     }
 }

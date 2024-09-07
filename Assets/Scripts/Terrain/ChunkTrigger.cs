@@ -2,35 +2,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChunkTrigger : MonoBehaviour
+namespace RadioRevolt
 {
-	private MapController controller;
-	[SerializeField] GameObject targetMap;
-
-	 public bool playerInArea;
-
-	private void Start()
+	public class ChunkTrigger : MonoBehaviour
 	{
-		controller = FindObjectOfType<MapController>();
-	}
+		private MapController controller;
+		[SerializeField] GameObject targetMap;
 
-	private void OnTriggerStay2D(Collider2D collision)
-	{
-		if (collision.CompareTag("Player"))
+		public bool playerInArea;
+
+		private void Start()
 		{
-			controller.currentChunk = targetMap;
-			playerInArea = true;
+			controller = FindObjectOfType<MapController>();
 		}
-	}
 
-	private void OnTriggerExit2D(Collider2D collision)
-	{
-		if (collision.CompareTag("Player"))
+		private void OnTriggerStay2D(Collider2D collision)
 		{
-			if (controller.currentChunk == targetMap)
+			if (collision.CompareTag("Player"))
 			{
-				controller.currentChunk = null;
-				playerInArea = false;
+				controller.currentChunk = targetMap;
+				playerInArea = true;
+			}
+		}
+
+		private void OnTriggerExit2D(Collider2D collision)
+		{
+			if (collision.CompareTag("Player"))
+			{
+				if (controller.currentChunk == targetMap)
+				{
+					controller.currentChunk = null;
+					playerInArea = false;
+				}
 			}
 		}
 	}

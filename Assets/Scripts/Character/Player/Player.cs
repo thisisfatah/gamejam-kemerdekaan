@@ -1,120 +1,142 @@
+using RadioRevolt.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum PlayerType
+namespace RadioRevolt
 {
-	Main,
-	Side
-}
-
-public class Player : MonoBehaviour
-{
-	public Animator anim;
-	private PlayerMovement playerMovement;
-	private PlayerManager player;
-
-	[SerializeField] private int health;
-
-	[SerializeField] private PlayerType playerType;
-
-	[SerializeField] private GameScene gameScene;
-
-	public bool isGameOver = false;
-
-	private void Awake()
+	public enum PlayerType
 	{
-		playerMovement = transform.parent.GetComponent<PlayerMovement>();
-		player = transform.parent.GetComponent<PlayerManager>();
+		Main,
+		Side
 	}
 
-	private void LateUpdate()
+	public class Player : MonoBehaviour
 	{
-		anim.SetBool("IsRun", playerMovement.moveDir != Vector2.zero);
-	}
+		public Animator anim;
+		private PlayerMovement playerMovement;
+		private PlayerManager player;
 
-	private void OnTriggerEnter2D(Collider2D collision)
-	{
-		if (playerType == PlayerType.Main)
+		[SerializeField] private int health;
+
+		[SerializeField] private PlayerType playerType;
+
+		[SerializeField] private GameScene gameScene;
+
+		public bool isGameOver = false;
+
+		public bool IsFacingRight { get; private set; }
+
+		private void Awake()
 		{
-			if (collision.CompareTag("Red") && collision.transform.parent.childCount > 0)
+			playerMovement = transform.parent.GetComponent<PlayerMovement>();
+			player = transform.parent.GetComponent<PlayerManager>();
+		}
+
+		private void LateUpdate()
+		{
+			anim.SetBool("IsRun", playerMovement.moveDir != Vector2.zero);
+		}
+
+		private void OnTriggerEnter2D(Collider2D collision)
+		{
+			if (playerType == PlayerType.Main)
 			{
-				int score = PlayerPrefs.GetInt("Score");
-				PlayerPrefs.SetInt("Score", score + 1);
-				GetDamage();
-				Destroy(collision.gameObject);
+				if (collision.CompareTag("Red") && collision.transform.parent.childCount > 0)
+				{
+					int score = PlayerPrefs.GetInt("Score");
+					PlayerPrefs.SetInt("Score", score + 1);
+					GetDamage();
+					ObjectPoolManager.ReturnObjectToPool(collision.gameObject, ObjectPoolManager.PoolType.Enemy);
+				}
+				else if (collision.CompareTag("MiniBoss"))
+				{
+					EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
+					enemyBehaviour.IncreaseHealth(1);
+					GetDamage();
+				}
+				else if (collision.CompareTag("Boss"))
+				{
+					EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
+					enemyBehaviour.IncreaseHealth(1);
+					GetDamage();
+				}
 			}
-			else if (collision.CompareTag("MiniBoss"))
+			else
 			{
-				EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-				enemyBehaviour.GetDamage();
-				GetDamage();
-			}
-			else if (collision.CompareTag("Boss"))
-			{
-				EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-				enemyBehaviour.GetDamage();
-				GetDamage();
+				if (collision.CompareTag("Red") && collision.transform.parent.childCount > 0)
+				{
+					ObjectPoolManager.ReturnObjectToPool(collision.gameObject, ObjectPoolManager.PoolType.Enemy);
+					ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Player);
+					int score = PlayerPrefs.GetInt("Score");
+					PlayerPrefs.SetInt("Score", score + 1);
+					player.virtualCamera.m_Lens.OrthographicSize -= 0.05f;
+				}
+				else if (collision.CompareTag("MiniBoss"))
+				{
+					EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
+					enemyBehaviour.IncreaseHealth(1);
+					ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Player);
+				}
+				else if (collision.CompareTag("Boss"))
+				{
+					EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
+					enemyBehaviour.IncreaseHealth(1);
+					ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Player);
+				}
 			}
 		}
-		else
+
+		private void OnTriggerStay2D(Collider2D collision)
 		{
-			if (collision.CompareTag("Red") && collision.transform.parent.childCount > 0)
+			if (playerType == PlayerType.Main)
 			{
-				Destroy(collision.gameObject);
-				Destroy(gameObject);
-				int score = PlayerPrefs.GetInt("Score");
-				PlayerPrefs.SetInt("Score", score + 1);
-				player.virtualCamera.m_Lens.OrthographicSize -= 0.1f;
-			}
-			else if (collision.CompareTag("MiniBoss"))
-			{
-				EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-				enemyBehaviour.GetDamage();
-				Destroy(gameObject);
-				player.virtualCamera.m_Lens.OrthographicSize -= 0.1f;
-			}
-			else if (collision.CompareTag("Boss"))
-			{
-				EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-				enemyBehaviour.GetDamage();
-				Destroy(gameObject);
-				player.virtualCamera.m_Lens.OrthographicSize -= 0.1f;
+				if (collision.CompareTag("MiniBoss"))
+				{
+					EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
+					enemyBehaviour.IncreaseHealth(1);
+					GetDamage();
+				}
+				else if (collision.CompareTag("Boss"))
+				{
+					EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
+					enemyBehaviour.IncreaseHealth(1);
+					GetDamage();
+				}
 			}
 		}
-	}
 
-	private void OnTriggerStay2D(Collider2D collision)
-	{
-		if (playerType == PlayerType.Main)
+		private void GetDamage()
 		{
-			if (collision.CompareTag("MiniBoss"))
+			health--;
+
+			if (!isGameOver)
 			{
-				EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-				enemyBehaviour.GetDamage();
-				GetDamage();
-			}
-			else if (collision.CompareTag("Boss"))
-			{
-				EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-				enemyBehaviour.GetDamage();
-				GetDamage();
+				if (health <= 0)
+				{
+					isGameOver = true;
+					gameScene.OpenPopup<GameOverPopUp>("Popups/GameOverPopup");
+				}
 			}
 		}
-		
-	}
 
-	private void GetDamage()
-	{
-		health--;
-
-		if (!isGameOver) 
+		public void CheckDirectionToFace(bool isMovingRight)
 		{
-			if (health <= 0)
-			{
-				isGameOver = true;
-				gameScene.OpenPopup<GameOverPopUp>("Popups/GameOverPopup");
-			}
+			if (isMovingRight != IsFacingRight)
+				Turn();
+		}
+
+		private void Turn()
+		{
+			Vector3 scale = transform.localScale;
+			scale.x *= -1;
+			transform.localScale = scale;
+			IsFacingRight = !IsFacingRight;
+		}
+
+		private void OnEnable()
+		{
+			IsFacingRight = true;
 		}
 	}
 }

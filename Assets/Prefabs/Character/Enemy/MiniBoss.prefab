@@ -181,8 +181,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed4298dc755c4c74bb523e647810e188, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 10
+  maxhealth: 10
+  durationFlash: 0.1
+  spriteRenderer: {fileID: 1176537729402640121}
+  flashMaterial: {fileID: 2100000, guid: 42c9a4126866381429cf4b9d0b0786b1, type: 2}
+  OnDieEvent:
+    m_PersistentCalls:
+      m_Calls: []
   speed: 3
   range: 0
   maxDistance: 0
   isBoss: 1
-  health: 10

@@ -1,30 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class GameScene : BaseScene
+namespace RadioRevolt
 {
-	private bool isPause = false;
-	private void Start()
+	public class GameScene : BaseScene
 	{
-		AudioManager.Instance.PlaySound("DarkForest");
-		PlayerPrefs.SetInt("Score", 0);
-	}
-
-	private void Update()
-	{
-		if (Input.GetKeyUp(KeyCode.Escape))
+		private bool isPause = false;
+		private void Start()
 		{
-			isPause = !isPause;
-			Time.timeScale = isPause ? 0 : 1;
-			if (isPause)
+			AudioManager.Instance.PlaySound("DarkForest");
+			PlayerPrefs.SetInt("Score", 0);
+		}
+
+		private void Update()
+		{
+			if (Input.GetKeyUp(KeyCode.Escape))
 			{
-				OpenPopup<PausePopup>("Popups/PausePopup", popup => popup.onClose.AddListener(() => { isPause = false; Time.timeScale = 1; }));
-			}
-			else
-			{
-				CloseCurrentPopup();
+				isPause = !isPause;
+				Time.timeScale = isPause ? 0 : 1;
+				if (isPause)
+				{
+					OpenPopup<PausePopup>("Popups/PausePopup", popup => popup.onClose.AddListener(() => { isPause = false; Time.timeScale = 1; }));
+				}
+				else
+				{
+					CloseCurrentPopup();
+				}
 			}
 		}
 	}
 }
+

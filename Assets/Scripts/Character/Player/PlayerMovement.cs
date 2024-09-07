@@ -3,51 +3,59 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMovement : MonoBehaviour
+namespace RadioRevolt
 {
-	[SerializeField] private float _moveSpeed = 10.0f;
-
-	public Rigidbody2D _rigid { get; private set; }
-
-	private PlayerManager _manager;
-
-	[HideInInspector] public Vector2 moveDir;
-
-	public bool IsFacingRight { get; private set; }
-
-	private void Awake()
+	public class PlayerMovement : MonoBehaviour
 	{
-		_rigid = GetComponent<Rigidbody2D>();
-		_manager = GetComponent<PlayerManager>();
+		[SerializeField] private float _moveSpeed = 10.0f;
 
-		IsFacingRight = true;
-	}
+		public Rigidbody2D _rigid { get; private set; }
 
-	private void FixedUpdate()
-	{
-        _rigid.AddForce(_moveSpeed * moveDir);
+		private PlayerManager _manager;
 
-		if (moveDir.x != 0)
-			CheckDirectionToFace(moveDir.x > 0);
-	}
+		[HideInInspector] public Vector2 moveDir { get; private set;}
 
-	void OnMove(InputValue value)
-	{
-		moveDir = value.Get<Vector2>().normalized;
-	}
+		public bool IsFacingRight {  get; private set; }
 
-	private void CheckDirectionToFace(bool isMovingRight)
-	{
-		if (isMovingRight != IsFacingRight)
-			Turn();
-	}
 
-	private void Turn()
-	{
-		Vector3 scale = transform.localScale;
-		scale.x *= -1;
-		transform.localScale = scale;
+		private void Awake()
+		{
+			_rigid = GetComponent<Rigidbody2D>();
+			_manager = GetComponent<PlayerManager>();
 
-		IsFacingRight = !IsFacingRight;
+			IsFacingRight = true;
+		}
+
+		private void FixedUpdate()
+		{
+			_rigid.AddForce(_moveSpeed * moveDir);
+
+			 for (int i = 0; i < transform.childCount; i++)
+			{
+				if (moveDir.x != 0)
+					CheckDirectionToFace(moveDir.x > 0);
+			}
+
+		}
+
+		void OnMove(InputValue value)
+		{
+			moveDir = value.Get<Vector2>().normalized;
+		}
+
+		public void CheckDirectionToFace(bool isMovingRight)
+		{
+			if (isMovingRight != IsFacingRight)
+				Turn();
+		}
+
+		private void Turn()
+		{
+			Vector3 scale = transform.localScale;
+			scale.x *= -1;
+			transform.localScale = scale;
+			IsFacingRight = !IsFacingRight;
+
+		}
 	}
 }

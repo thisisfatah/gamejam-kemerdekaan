@@ -1,40 +1,56 @@
+using RadioRevolt.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyManager : Character
+namespace RadioRevolt
 {
-	private bool attack;
-	private Transform enemyTransform;
-
-	private void Start()
+	public class EnemyManager : SpawnCharacterRadioRevolt
 	{
-		MakeStickMan(20);
-	}
+		private bool attack;
+		private Transform enemyTransform;
 
-	private void Update()
-	{
-		if (attack && transform.childCount > 0) 
+		protected override void Start()
 		{
-			Vector2 enemyDir = enemyTransform.position - transform.position;
+			base.Start();
 
-			for (int i = 0; i < transform.childCount; i++)
+			MakeStickMan(20);
+		}
+
+		private void Update()
+		{
+			if (attack && transform.childCount > 0)
 			{
-				Vector2 distance = enemyTransform.GetChild(0).position - transform.GetChild(i).position;
+				Vector2 enemyDir = enemyTransform.position - transform.position;
 
-				if(distance.magnitude < 3f)
+				for (int i = 0; i < transform.childCount; i++)
 				{
-					transform.GetChild(i).position = Vector3.Lerp(transform.GetChild(i).position,
-							enemyTransform.GetChild(0).position,
-							Time.deltaTime * 2f);
+					Vector2 distance = enemyTransform.GetChild(0).position - transform.GetChild(i).position;
+
+					if (distance.magnitude < 3f)
+					{
+						transform.GetChild(i).position = Vector3.Lerp(transform.GetChild(i).position,
+								enemyTransform.GetChild(0).position,
+								Time.deltaTime * 2f);
+					}
 				}
 			}
+			else if(attack && transform.childCount <= 0)
+			{
+				attack = false;
+				ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Enemy);
+			}
 		}
-	}
 
-	public void Attack(Transform enemyForce)
-	{
-		attack = true;
-		enemyTransform = enemyForce;
+		public void Attack(Transform enemyForce)
+		{
+			attack = true;
+			enemyTransform = enemyForce;
+		}
+
+		private void OnEnable()
+		{
+			MakeStickMan(20);
+		}
 	}
 }

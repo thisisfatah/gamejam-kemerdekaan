@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Score : MonoBehaviour
+namespace RadioRevolt
 {
-	private Player _player;
-
-	private void Start()
+	public class Score : MonoBehaviour
 	{
-		_player = FindObjectOfType<Player>();
+		private Player _player;
+
+		private void Start()
+		{
+			_player = FindObjectOfType<Player>();
+		}
+
+		private void Update()
+		{
+			if (_player.isGameOver) return;
+
+			GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetInt("Score").ToString();
+		}
 	}
-
-	private void Update()
-    {
-		if(_player.isGameOver) return;
-
-        GetComponent<TextMeshProUGUI>().text = PlayerPrefs.GetInt("Score").ToString();
-    }
 }

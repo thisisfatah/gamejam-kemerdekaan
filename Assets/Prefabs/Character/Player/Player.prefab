@@ -246,6 +246,7 @@ MonoBehaviour:
   health: 0
   playerType: 1
   gameScene: {fileID: 0}
+  isGameOver: 0
 --- !u!114 &1962723324920486904
 MonoBehaviour:
   m_ObjectHideFlags: 0

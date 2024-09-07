@@ -197,7 +197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnTransform: {fileID: 9171944063668577033}
-  spawnGameObject: {fileID: 5984619513722413163, guid: 25b0df17a48e9cb4b95aed5da6d4d99a, type: 3}
+  spawnGameObject: {fileID: 4111954977463160685, guid: 25b0df17a48e9cb4b95aed5da6d4d99a, type: 3}
   _distanceFactor: 0
   _radius: 0
   spawnTimeInMinutes: 0.1
