@@ -153,7 +153,8 @@ namespace RadioRevolt
 		{
 			int score = PlayerPrefs.GetInt("Score");
 			PlayerPrefs.SetInt("Score", score + 3);
-			ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Enemy);
+			Destroy(gameObject);
+			//ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Enemy);
 			FullHealth();
 		}
 	}

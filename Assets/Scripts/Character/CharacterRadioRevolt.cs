@@ -22,6 +22,10 @@ namespace RadioRevolt
 
 		public UnityEvent OnDieEvent;
 
+		private void Start()
+		{
+		}
+
 		public virtual void IncreaseHealth(float value)
 		{
 			if (health <= 0) return;
@@ -29,11 +33,7 @@ namespace RadioRevolt
 			Flash();
 			health -= value;
 
-			if (health <= 0)
-			{
-				if (OnDieEvent != null)
-					OnDieEvent.Invoke();
-			}
+			Debug.Log(health + " " + gameObject.name);
 		}
 
 		public virtual void DecreaseHealth(float value)
@@ -55,6 +55,7 @@ namespace RadioRevolt
 		{
 			if (flashRoutine != null)
 			{
+				spriteRenderer.material = originalMaterial;
 				StopCoroutine(flashRoutine);
 			}
 			else
@@ -69,7 +70,14 @@ namespace RadioRevolt
 		{
 			spriteRenderer.material = flashMaterial;
 			yield return new WaitForSeconds(durationFlash);
+			Debug.Log("back to material");
 			spriteRenderer.material = originalMaterial;
+
+			if (health <= 0)
+			{
+				if (OnDieEvent != null)
+					OnDieEvent.Invoke();
+			}
 		}
 	}
 }

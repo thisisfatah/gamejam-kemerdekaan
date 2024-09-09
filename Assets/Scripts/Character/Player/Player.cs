@@ -15,7 +15,7 @@ namespace RadioRevolt
 	{
 		public Animator anim;
 		private PlayerMovement playerMovement;
-		private PlayerManager player;
+		private PlayerManager playerManager;
 
 		[SerializeField] private int health;
 
@@ -29,19 +29,36 @@ namespace RadioRevolt
 
 		private void Awake()
 		{
-			playerMovement = transform.parent.GetComponent<PlayerMovement>();
-			player = transform.parent.GetComponent<PlayerManager>();
+			if(transform.parent != null)
+			{
+				playerManager = transform.parent.GetComponent<PlayerManager>();
+				playerMovement = playerManager.GetComponent<PlayerMovement>();
+			}
+
 			gameScene = FindObjectOfType<GameScene>();
 		}
 
 		private void LateUpdate()
 		{
+			if (playerMovement == null) return;
+
 			anim.SetBool("IsRun", playerMovement.moveDir != Vector2.zero);
+		}
+
+		public void Init()
+		{
+			if (transform.parent != null)
+			{
+				playerManager = transform.parent.GetComponent<PlayerManager>();
+				playerMovement = playerManager.GetComponent<PlayerMovement>();
+			}
 		}
 
 		private void OnTriggerEnter2D(Collider2D collision)
 		{
-			if (playerType == PlayerType.Main)
+			if(playerManager == null) return;
+
+			/*if (playerType == PlayerType.Main)
 			{
 				if (collision.CompareTag("Red") && collision.transform.parent.childCount > 0)
 				{
@@ -85,6 +102,20 @@ namespace RadioRevolt
 					enemyBehaviour.IncreaseHealth(1);
 					ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Player);
 				}
+			}*/
+
+			if (collision.CompareTag("Enemy"))
+			{
+				int score = PlayerPrefs.GetInt("Score");
+				PlayerPrefs.SetInt("Score", score + 1);
+
+				EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
+				enemyBehaviour.IncreaseHealth(1);
+
+				GetDamage();
+
+				//Destroy(collision.gameObject);
+				//ObjectPoolManager.ReturnObjectToPool(collision.gameObject, ObjectPoolManager.PoolType.Enemy);
 			}
 		}
 

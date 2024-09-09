@@ -6,8 +6,6 @@ TagManager:
   tags:
   - Gate
   - Enemy
-  - Red
-  - White
   - Boss
   - MiniBoss
   layers:

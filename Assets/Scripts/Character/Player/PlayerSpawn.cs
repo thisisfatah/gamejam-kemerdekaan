@@ -9,7 +9,7 @@ namespace RadioRevolt
 	public class PlayerSpawn : MonoBehaviour
 	{
 		[SerializeField] Transform spawnTransform;
-		[SerializeField] GameObject spawnGameObject;
+		[SerializeField] List<GameObject> spawnGameObject;
 
 		private void Start()
 		{
@@ -18,10 +18,11 @@ namespace RadioRevolt
 
 		public void SpawnPlayer()
 		{
-			GameObject objectSpawn = ObjectPoolManager.SpawnObject(spawnGameObject, spawnTransform.position, Quaternion.identity, ObjectPoolManager.PoolType.Player);
-			/*PlayerGateManager playerGateManager = objectSpawn.GetComponent<PlayerGateManager>();
-
-			playerGateManager.Init();*/
+			for (int i = 0; i < spawnGameObject.Count; i++)
+			{
+				Vector3 offsetSpawn = new Vector3(Random.Range(-5,5), Random.Range(-5,5));
+				GameObject objectSpawn = ObjectPoolManager.SpawnObject(spawnGameObject[i], spawnTransform.position + offsetSpawn, Quaternion.identity, ObjectPoolManager.PoolType.Player);
+			}
 		}
 	}
 }

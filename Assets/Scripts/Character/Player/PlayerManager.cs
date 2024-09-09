@@ -34,34 +34,36 @@ namespace RadioRevolt
 
 		private void Update()
 		{
-			if (attack && transform.childCount > 1)
+			if (attack && enemyTransform != null)
 			{
 				Vector2 enemyDir = (Vector2)(enemyTransform.position - transform.position);
-				if (enemyTransform != null)
+
+				for (int i = 1; i < transform.childCount; i++)
 				{
-					for (int i = 1; i < transform.childCount; i++)
+					Vector2 distance = enemyTransform.position - transform.GetChild(i).position;
+					if (distance.magnitude < 3f)
 					{
-						Vector2 distance = enemyTransform.position - transform.GetChild(i).position;
-						if (distance.magnitude < 3f)
-						{
-							transform.GetChild(i).position = Vector3.Lerp(transform.GetChild(i).position,
-								enemyTransform.GetChild(0).position,
-								Time.deltaTime * 1f);
-						}
+						transform.GetChild(i).position = Vector3.Lerp(transform.GetChild(i).position,
+							enemyTransform.GetChild(0).position,
+							Time.deltaTime * 1f);
 					}
 				}
-				else
-				{
-					ObjectPoolManager.ReturnObjectToPool(enemyTransform.gameObject, ObjectPoolManager.PoolType.Enemy);
-					attack = false;
-					FormatCharacter();
-				}
+			}
+			else
+			{
+				attack = false;
+				FormatCharacter();
 			}
 		}
 
-		protected void SpawnPlayer()
+		protected void SpawnPlayer(Player player)
 		{
-			GameObject newPlayer = ObjectPoolManager.SpawnObject(character, transform);
+			player.transform.SetParent(transform);
+			player.transform.position = transform.position;
+			player.transform.rotation = transform.rotation;
+			player.transform.localScale = Vector3.one;
+
+			player.Init();
 
 			numberOfCharacter = transform.childCount;
 
@@ -70,23 +72,24 @@ namespace RadioRevolt
 
 		private void OnTriggerEnter2D(Collider2D collision)
 		{
-			if (collision.CompareTag("Gate"))
-			{
-				PlayerData playerData = collision.GetComponent<PlayerGateManager>().playerData;
-				character.GetComponent<Player>().anim.runtimeAnimatorController = playerData.animator;
-				character.transform.GetChild(0).GetComponent<Light2D>().enabled = playerData.useLight;
-
-				SpawnPlayer();
-				ObjectPoolManager.ReturnObjectToPool(collision.gameObject, ObjectPoolManager.PoolType.Player);
-				virtualCamera.m_Lens.OrthographicSize += 0.1f;
-			}
-
 			if (collision.CompareTag("Enemy"))
 			{
+				Debug.Log("Test");
+
 				enemyTransform = collision.transform;
 				attack = true;
 				//collision.GetComponent<EnemyManager>().Attack(transform);
 			}
+
+			if (collision.CompareTag("Gate"))
+			{
+				collision.gameObject.tag = "Untagged";
+
+				SpawnPlayer(collision.GetComponent<Player>());
+				//ObjectPoolManager.ReturnObjectToPool(collision.gameObject, ObjectPoolManager.PoolType.Player);
+				virtualCamera.m_Lens.OrthographicSize += 0.1f;
+			}
+
 		}
 
 		protected void FormatCharacter()
@@ -94,20 +97,17 @@ namespace RadioRevolt
 			float yPos = 0;
 			for (int i = 0; i < transform.childCount; i++)
 			{
-				if (transform.GetChild(i).gameObject.activeInHierarchy)
+				float x = _distanceFactor * Mathf.Sqrt(i) * Mathf.Cos(i * _radius);
+				float y = _distanceFactor * Mathf.Sqrt(i) * Mathf.Sin(i * _radius);
+
+				Vector2 newPos = new Vector2(x, y);
+				transform.GetChild(i).DOLocalMove(newPos, 0.5f).SetEase(Ease.OutBack);
+
+				if (i == 0) continue;
+
+				if (y > yPos)
 				{
-					float x = _distanceFactor * Mathf.Sqrt(i) * Mathf.Cos(i * _radius);
-					float y = _distanceFactor * Mathf.Sqrt(i) * Mathf.Sin(i * _radius);
-
-					Vector2 newPos = new Vector2(x, y);
-					transform.GetChild(i).DOLocalMove(newPos, 0.1f).SetEase(Ease.OutBack);
-
-					if (i == 0) continue;
-
-					if (y > yPos)
-					{
-						yPos = y;
-					}
+					yPos = y;
 				}
 			}
 			circleCollider.radius = yPos;
