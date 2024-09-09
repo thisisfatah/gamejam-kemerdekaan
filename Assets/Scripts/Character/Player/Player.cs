@@ -31,6 +31,7 @@ namespace RadioRevolt
 		{
 			playerMovement = transform.parent.GetComponent<PlayerMovement>();
 			player = transform.parent.GetComponent<PlayerManager>();
+			gameScene = FindObjectOfType<GameScene>();
 		}
 
 		private void LateUpdate()
@@ -115,7 +116,13 @@ namespace RadioRevolt
 				if (health <= 0)
 				{
 					isGameOver = true;
-					gameScene.OpenPopup<GameOverPopUp>("Popups/GameOverPopup");
+					ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Player);
+					switch (playerType)
+					{
+						case PlayerType.Main:
+							gameScene.OpenPopup<GameOverPopUp>("Popups/GameOverPopup");
+							break;
+					}
 				}
 			}
 		}

@@ -6,7 +6,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace RadioRevolt
 {
-	public class PlayerManager : SpawnCharacterRadioRevolt
+	public class PlayerManager : MonoBehaviour
 	{
 		private Transform playerTransform;
 		private Transform enemyTransform;
@@ -14,9 +14,19 @@ namespace RadioRevolt
 
 		[HideInInspector] public bool attack;
 
-		protected override void Start()
+		[SerializeField] protected GameObject character;
+		[Range(0f, 1f)]
+		[SerializeField] private float _distanceFactor;
+		[Range(0f, 1f)]
+		[SerializeField] private float _radius;
+
+		[SerializeField] private CircleCollider2D circleCollider;
+
+		private int numberOfCharacter;
+
+		protected virtual void Start()
 		{
-			base.Start();
+			numberOfCharacter = transform.childCount;
 
 			playerTransform = transform;
 			virtualCamera.m_Lens.OrthographicSize = 5;
@@ -27,37 +37,17 @@ namespace RadioRevolt
 			if (attack && transform.childCount > 1)
 			{
 				Vector2 enemyDir = (Vector2)(enemyTransform.position - transform.position);
-				if (enemyTransform.childCount > 0)
+				if (enemyTransform != null)
 				{
-					bool enemyActive = false;
-					for (int i = 1; i < enemyTransform.childCount; i++)
+					for (int i = 1; i < transform.childCount; i++)
 					{
-						if (enemyTransform.GetChild(i).gameObject.activeInHierarchy)
+						Vector2 distance = enemyTransform.position - transform.GetChild(i).position;
+						if (distance.magnitude < 3f)
 						{
-							enemyActive = true;
-							break;
+							transform.GetChild(i).position = Vector3.Lerp(transform.GetChild(i).position,
+								enemyTransform.GetChild(0).position,
+								Time.deltaTime * 1f);
 						}
-						enemyActive = false;
-                    }
-
-					if (enemyActive)
-					{
-						for (int i = 1; i < transform.childCount; i++)
-						{
-							Vector2 distance = enemyTransform.GetChild(0).position - transform.GetChild(i).position;
-							if (distance.magnitude < 3f)
-							{
-								transform.GetChild(i).position = Vector3.Lerp(transform.GetChild(i).position,
-									enemyTransform.GetChild(0).position,
-									Time.deltaTime * 1f);
-							}
-						}
-					}
-					else
-					{
-						ObjectPoolManager.ReturnObjectToPool(enemyTransform.gameObject, ObjectPoolManager.PoolType.Enemy);
-						attack = false;
-						FormatCharacter();
 					}
 				}
 				else
@@ -69,6 +59,15 @@ namespace RadioRevolt
 			}
 		}
 
+		protected void SpawnPlayer()
+		{
+			GameObject newPlayer = ObjectPoolManager.SpawnObject(character, transform);
+
+			numberOfCharacter = transform.childCount;
+
+			FormatCharacter();
+		}
+
 		private void OnTriggerEnter2D(Collider2D collision)
 		{
 			if (collision.CompareTag("Gate"))
@@ -77,7 +76,7 @@ namespace RadioRevolt
 				character.GetComponent<Player>().anim.runtimeAnimatorController = playerData.animator;
 				character.transform.GetChild(0).GetComponent<Light2D>().enabled = playerData.useLight;
 
-				MakeStickMan(1);
+				SpawnPlayer();
 				ObjectPoolManager.ReturnObjectToPool(collision.gameObject, ObjectPoolManager.PoolType.Player);
 				virtualCamera.m_Lens.OrthographicSize += 0.1f;
 			}
@@ -86,8 +85,32 @@ namespace RadioRevolt
 			{
 				enemyTransform = collision.transform;
 				attack = true;
-				collision.GetComponent<EnemyManager>().Attack(transform);
+				//collision.GetComponent<EnemyManager>().Attack(transform);
 			}
+		}
+
+		protected void FormatCharacter()
+		{
+			float yPos = 0;
+			for (int i = 0; i < transform.childCount; i++)
+			{
+				if (transform.GetChild(i).gameObject.activeInHierarchy)
+				{
+					float x = _distanceFactor * Mathf.Sqrt(i) * Mathf.Cos(i * _radius);
+					float y = _distanceFactor * Mathf.Sqrt(i) * Mathf.Sin(i * _radius);
+
+					Vector2 newPos = new Vector2(x, y);
+					transform.GetChild(i).DOLocalMove(newPos, 0.1f).SetEase(Ease.OutBack);
+
+					if (i == 0) continue;
+
+					if (y > yPos)
+					{
+						yPos = y;
+					}
+				}
+			}
+			circleCollider.radius = yPos;
 		}
 	}
 }

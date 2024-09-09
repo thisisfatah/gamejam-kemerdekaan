@@ -1,53 +1,112 @@
+using Pathfinding;
 using RadioRevolt.Utils;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace RadioRevolt
 {
 	public class EnemyBehaviour : CharacterRadioRevolt
 	{
-		[SerializeField] private float speed;
-		[SerializeField] private float range;
-		[SerializeField] private float maxDistance;
+		[Header("PathFinding")]
+		private Transform target;
+		[SerializeField] private float randomDistance = 0.5f;
+		[SerializeField] private float playerDistance = 20f;
+		[SerializeField] private float pathUpdateSeconds = 0.5f;
 
-		[SerializeField] private bool isBoss;
+		[Header("Physics")]
+		[SerializeField] private float speed = 200f;
+		private float nextWayPointDistance = 3f;
 
-		PlayerManager playerManager;
-		public bool IsFacingRight { get; private set; }
+		[Header("Custom Behaviour")]
+		[SerializeField] private bool followEnabled = true;
+		[SerializeField] private bool directionLookEnabled = true;
 
+		private PlayerManager playerManager;
+		private Path path;
+		private Seeker seeker;
+		private Rigidbody2D rb;
 		private Vector2 wayPoint;
+		public bool IsFacingRight { get; private set; }
+		private int currentWayPoint = 0;
+
+		[Header("Check")]
+		[SerializeField] private float maxDistance;
+		[SerializeField] private bool isBoss;
 
 		private void Start()
 		{
-			SetNewDestination();
+			seeker = GetComponent<Seeker>();
+			rb = GetComponent<Rigidbody2D>();
+
 			playerManager = FindObjectOfType<PlayerManager>();
 			IsFacingRight = true;
 
+			target = playerManager.transform;
+
+			SetNewDistance();
+
 			OnDieEvent.AddListener(() => KilledEnemy());
+
+
+			InvokeRepeating("UpdatePath", 0f, pathUpdateSeconds);
 		}
 
-		private void Update()
+		private void FixedUpdate()
 		{
-			Vector2 moveDir = Vector2.zero;
-			if (isBoss)
+			if (followEnabled)
 			{
-				moveDir = (playerManager.transform.position - transform.position).normalized;
-				transform.position = Vector2.MoveTowards(transform.position, playerManager.transform.position, speed * Time.deltaTime);
-
+				PathFollow();
 			}
-			else
+		}
+
+		private void UpdatePath()
+		{
+			if (followEnabled && seeker.IsDone())
 			{
-				moveDir = (wayPoint - (Vector2)transform.position).normalized;
-				transform.position = Vector2.MoveTowards(transform.position, wayPoint, speed * Time.deltaTime);
-				if (Vector2.Distance(transform.position, wayPoint) < range)
-				{
-					SetNewDestination();
-				}
+				seeker.StartPath(rb.position, Destination(), OnPathComplete);
+			}
+		}
+
+		private void PathFollow()
+		{
+			if (path == null)
+			{
+				return;
 			}
 
-			if (moveDir.x != 0)
-				CheckDirectionToFace(moveDir.x > 0);
+			if (currentWayPoint >= path.vectorPath.Count)
+			{
+				return;
+			}
+
+			Vector2 dir = ((Vector2)path.vectorPath[currentWayPoint] - rb.position).normalized;
+			Vector2 force = dir * speed * Time.deltaTime;
+
+
+			rb.AddForce(force, ForceMode2D.Force);
+
+			float distance = Vector2.Distance(rb.position, path.vectorPath[currentWayPoint]);
+
+			if (distance < nextWayPointDistance)
+			{
+				currentWayPoint++;
+			}
+
+			SetNewDistance();
+
+			if (directionLookEnabled)
+			{
+				if (rb.velocity.x != 0)
+					CheckDirectionToFace(rb.velocity.x > 0);
+			}
+		}
+
+		private void OnPathComplete(Path p)
+		{
+			if (!p.error)
+			{
+				path = p;
+				currentWayPoint = 0;
+			}
 		}
 
 		private void CheckDirectionToFace(bool isMovingRight)
@@ -62,17 +121,32 @@ namespace RadioRevolt
 			{
 				for (int i = 0; i < transform.childCount; i++)
 				{
-					Vector3 scale = transform.GetChild(i).localScale;
+					Vector3 scale = transform.localScale;
 					scale.x *= -1;
-					transform.GetChild(i).localScale = scale;
+					transform.localScale = scale;
 				}
 				IsFacingRight = !IsFacingRight;
 			}
 		}
 
-		private void SetNewDestination()
+		private Vector2 Destination()
 		{
-			wayPoint = new Vector2(Random.Range(-maxDistance, maxDistance), Random.Range(-maxDistance, maxDistance));
+			if (Vector2.Distance(rb.position, (Vector2)target.position) < playerDistance)
+			{
+				return (Vector2)target.position;
+			}
+			else
+			{
+				return wayPoint;
+			}
+		}
+
+		private void SetNewDistance()
+		{
+			if (Vector2.Distance(rb.position, wayPoint) < randomDistance)
+			{
+				wayPoint = new Vector2(Random.Range(-maxDistance, maxDistance), Random.Range(-maxDistance, maxDistance));
+			}
 		}
 
 		private void KilledEnemy()
