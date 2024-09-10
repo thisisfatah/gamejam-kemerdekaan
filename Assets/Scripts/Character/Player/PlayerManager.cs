@@ -51,6 +51,7 @@ namespace RadioRevolt
 				attack = false;
 				FormatCharacter();
 			}
+			FormatCharacter();
 		}
 
 		protected void SpawnPlayer(Player player)

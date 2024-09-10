@@ -29,10 +29,13 @@ namespace RadioRevolt
 
 		private void Awake()
 		{
-			if(transform.parent != null)
+			if (transform.parent != null)
 			{
 				playerManager = transform.parent.GetComponent<PlayerManager>();
-				playerMovement = playerManager.GetComponent<PlayerMovement>();
+				if(playerManager != null)
+				{
+					playerMovement = playerManager.GetComponent<PlayerMovement>();
+				}
 			}
 
 			gameScene = FindObjectOfType<GameScene>();
@@ -56,7 +59,7 @@ namespace RadioRevolt
 
 		private void OnTriggerEnter2D(Collider2D collision)
 		{
-			if(playerManager == null) return;
+			if (playerManager == null) return;
 
 			/*if (playerType == PlayerType.Main)
 			{
@@ -148,6 +151,7 @@ namespace RadioRevolt
 				{
 					isGameOver = true;
 					ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Player);
+					ResetPlayer();
 
 					switch (playerType)
 					{
@@ -159,18 +163,11 @@ namespace RadioRevolt
 			}
 		}
 
-		public void CheckDirectionToFace(bool isMovingRight)
+		private void ResetPlayer()
 		{
-			if (isMovingRight != IsFacingRight)
-				Turn();
-		}
-
-		private void Turn()
-		{
-			Vector3 scale = transform.localScale;
-			scale.x *= -1;
-			transform.localScale = scale;
-			IsFacingRight = !IsFacingRight;
+			playerManager = null;
+			playerMovement = null;
+			gameObject.tag = "Gate";
 		}
 
 		private void OnEnable()

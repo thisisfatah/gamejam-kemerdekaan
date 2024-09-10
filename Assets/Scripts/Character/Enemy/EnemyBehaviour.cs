@@ -61,7 +61,6 @@ namespace RadioRevolt
 		{
 			if (followEnabled && seeker.IsDone())
 			{
-				Debug.Log(Destination());
 				seeker.StartPath(rb.position, Destination(), OnPathComplete);
 			}
 		}

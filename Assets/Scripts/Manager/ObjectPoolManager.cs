@@ -85,6 +85,8 @@ namespace RadioRevolt.Utils
 			if (spawnableObj == null)
 			{
 				spawnableObj = Instantiate(objectToSpawn, transform);
+				spawnableObj.transform.position = transform.position;
+				spawnableObj.transform.localScale = new Vector3(1, 1, 1);
 			}
 			else
 			{

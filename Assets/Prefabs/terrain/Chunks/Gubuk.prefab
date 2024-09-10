@@ -45,7 +45,6 @@ GameObject:
   - component: {fileID: 9171944064033370314}
   - component: {fileID: 9171944064033370317}
   - component: {fileID: 4977650392627283224}
-  - component: {fileID: 9171944064033370316}
   m_Layer: 0
   m_Name: Gubuk
   m_TagString: Untagged
@@ -197,20 +196,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0334a19001b3dee43bd649ca868f5b31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waves: []
+  wave:
+    objectGroups: []
+    waveQuota: 0
+    spawnInteval: 3
+    spawnCount: 0
   currentWaveCount: 0
+  spawnPoint: {fileID: 9171944063668577033}
   alert: {fileID: 0}
---- !u!114 &9171944064033370316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9171944064033370315}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7f447da37f527b4a95220cd90a06a0f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnTransform: {fileID: 9171944063668577033}
-  spawnGameObject: []
