@@ -20,7 +20,7 @@ namespace RadioRevolt
 		{
 			for (int i = 0; i < spawnGameObject.Count; i++)
 			{
-				Vector3 offsetSpawn = new Vector3(Random.Range(-5,5), Random.Range(-5,5));
+				Vector3 offsetSpawn = new Vector3(Random.Range(-2, 2), Random.Range(-2, 2));
 				GameObject objectSpawn = ObjectPoolManager.SpawnObject(spawnGameObject[i], spawnTransform.position + offsetSpawn, Quaternion.identity, ObjectPoolManager.PoolType.Player);
 			}
 		}

@@ -153,10 +153,10 @@ CapsuleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.20006353, y: -0.34964716}
+  m_Offset: {x: 0.37, y: -0.34964716}
   m_Size: {x: 0.90012705, y: 2.6536963}
   m_Direction: 0
 --- !u!50 &1735357371
@@ -234,7 +234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 1
   maxhealth: 1
-  durationFlash: 0.5
+  durationFlash: 0.1
   spriteRenderer: {fileID: 1176537729402640121}
   flashMaterial: {fileID: 2100000, guid: 42c9a4126866381429cf4b9d0b0786b1, type: 2}
   OnDieEvent:

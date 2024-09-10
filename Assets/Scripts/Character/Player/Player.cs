@@ -121,21 +121,21 @@ namespace RadioRevolt
 
 		private void OnTriggerStay2D(Collider2D collision)
 		{
-			if (playerType == PlayerType.Main)
-			{
-				if (collision.CompareTag("MiniBoss"))
-				{
-					EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-					enemyBehaviour.IncreaseHealth(1);
-					GetDamage();
-				}
-				else if (collision.CompareTag("Boss"))
-				{
-					EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-					enemyBehaviour.IncreaseHealth(1);
-					GetDamage();
-				}
-			}
+			//if (playerType == PlayerType.Main)
+			//{
+			//	if (collision.CompareTag("MiniBoss"))
+			//	{
+			//		EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
+			//		enemyBehaviour.IncreaseHealth(1);
+			//		GetDamage();
+			//	}
+			//	else if (collision.CompareTag("Boss"))
+			//	{
+			//		EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
+			//		enemyBehaviour.IncreaseHealth(1);
+			//		GetDamage();
+			//	}
+			//}
 		}
 
 		private void GetDamage()
@@ -148,6 +148,7 @@ namespace RadioRevolt
 				{
 					isGameOver = true;
 					ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Player);
+
 					switch (playerType)
 					{
 						case PlayerType.Main:

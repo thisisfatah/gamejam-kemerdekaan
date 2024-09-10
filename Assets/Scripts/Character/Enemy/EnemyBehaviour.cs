@@ -24,6 +24,7 @@ namespace RadioRevolt
 		private Path path;
 		private Seeker seeker;
 		private Rigidbody2D rb;
+
 		private Vector2 wayPoint;
 		public bool IsFacingRight { get; private set; }
 		private int currentWayPoint = 0;
@@ -40,12 +41,10 @@ namespace RadioRevolt
 			playerManager = FindObjectOfType<PlayerManager>();
 			IsFacingRight = true;
 
+			SetNewDistance();
 			target = playerManager.transform;
 
-			SetNewDistance();
-
 			OnDieEvent.AddListener(() => KilledEnemy());
-
 
 			InvokeRepeating("UpdatePath", 0f, pathUpdateSeconds);
 		}
@@ -62,6 +61,7 @@ namespace RadioRevolt
 		{
 			if (followEnabled && seeker.IsDone())
 			{
+				Debug.Log(Destination());
 				seeker.StartPath(rb.position, Destination(), OnPathComplete);
 			}
 		}
@@ -81,7 +81,6 @@ namespace RadioRevolt
 			Vector2 dir = ((Vector2)path.vectorPath[currentWayPoint] - rb.position).normalized;
 			Vector2 force = dir * speed * Time.deltaTime;
 
-
 			rb.AddForce(force, ForceMode2D.Force);
 
 			float distance = Vector2.Distance(rb.position, path.vectorPath[currentWayPoint]);
@@ -91,7 +90,10 @@ namespace RadioRevolt
 				currentWayPoint++;
 			}
 
-			SetNewDistance();
+			if (Vector2.Distance(rb.position, wayPoint) < randomDistance)
+			{
+				SetNewDistance();
+			}
 
 			if (directionLookEnabled)
 			{
@@ -143,10 +145,7 @@ namespace RadioRevolt
 
 		private void SetNewDistance()
 		{
-			if (Vector2.Distance(rb.position, wayPoint) < randomDistance)
-			{
-				wayPoint = new Vector2(Random.Range(-maxDistance, maxDistance), Random.Range(-maxDistance, maxDistance));
-			}
+			wayPoint = (Vector2)transform.position + new Vector2(Random.Range(-maxDistance, maxDistance), Random.Range(-maxDistance, maxDistance));
 		}
 
 		private void KilledEnemy()

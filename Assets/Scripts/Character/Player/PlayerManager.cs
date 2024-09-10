@@ -10,11 +10,9 @@ namespace RadioRevolt
 	{
 		private Transform playerTransform;
 		private Transform enemyTransform;
-		public CinemachineVirtualCamera virtualCamera;
 
 		[HideInInspector] public bool attack;
 
-		[SerializeField] protected GameObject character;
 		[Range(0f, 1f)]
 		[SerializeField] private float _distanceFactor;
 		[Range(0f, 1f)]
@@ -29,7 +27,6 @@ namespace RadioRevolt
 			numberOfCharacter = transform.childCount;
 
 			playerTransform = transform;
-			virtualCamera.m_Lens.OrthographicSize = 5;
 		}
 
 		private void Update()
@@ -87,7 +84,6 @@ namespace RadioRevolt
 
 				SpawnPlayer(collision.GetComponent<Player>());
 				//ObjectPoolManager.ReturnObjectToPool(collision.gameObject, ObjectPoolManager.PoolType.Player);
-				virtualCamera.m_Lens.OrthographicSize += 0.1f;
 			}
 
 		}
