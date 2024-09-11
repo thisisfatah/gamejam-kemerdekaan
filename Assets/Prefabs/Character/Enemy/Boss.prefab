@@ -246,5 +246,6 @@ MonoBehaviour:
   speed: 750
   followEnabled: 1
   directionLookEnabled: 1
+  type: 2
   maxDistance: 10
   isBoss: 1

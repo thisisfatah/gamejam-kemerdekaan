@@ -6,6 +6,14 @@ namespace RadioRevolt
 {
 	public class EnemyBehaviour : CharacterRadioRevolt
 	{
+		[System.Serializable]
+		public enum BossType
+		{
+			Prajurit,
+			MiniBoss,
+			Boss
+		}
+
 		[Header("PathFinding")]
 		private Transform target;
 		[SerializeField] private float randomDistance = 0.5f;
@@ -19,6 +27,7 @@ namespace RadioRevolt
 		[Header("Custom Behaviour")]
 		[SerializeField] private bool followEnabled = true;
 		[SerializeField] private bool directionLookEnabled = true;
+		[SerializeField] private BossType type;
 
 		private PlayerManager playerManager;
 		private Path path;
@@ -28,6 +37,8 @@ namespace RadioRevolt
 		private Vector2 wayPoint;
 		public bool IsFacingRight { get; private set; }
 		private int currentWayPoint = 0;
+
+		private GameScene gameScene;
 
 		[Header("Check")]
 		[SerializeField] private float maxDistance;
@@ -39,6 +50,7 @@ namespace RadioRevolt
 			rb = GetComponent<Rigidbody2D>();
 
 			playerManager = FindObjectOfType<PlayerManager>();
+			gameScene = FindObjectOfType<GameScene>();
 			IsFacingRight = true;
 
 			SetNewDistance();
@@ -149,10 +161,11 @@ namespace RadioRevolt
 
 		private void KilledEnemy()
 		{
-			int score = PlayerPrefs.GetInt("Score");
-			PlayerPrefs.SetInt("Score", score + 3);
+			if (!gameScene.IsGameOver && type == BossType.Boss)
+			{
+				gameScene.EndGame();
+			}
 			Destroy(gameObject);
-			//ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Enemy);
 			FullHealth();
 		}
 	}

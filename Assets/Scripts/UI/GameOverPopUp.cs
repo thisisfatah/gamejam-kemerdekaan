@@ -10,15 +10,19 @@ public class GameOverPopUp : Popup
 	protected override void Start()
 	{
         base.Start();
-		score.text = PlayerPrefs.GetInt("Score").ToString();
+
+		int Seconds = (int)(PlayerPrefs.GetFloat("Time") % 60);
+		int Minutes = (int)(PlayerPrefs.GetFloat("Time") / 60);
+
+		score.text = string.Format("{0:00}:{1:00}", Minutes, Seconds);
 	}
 
 	private void Update()
     {
-       /* if (Input.anyKeyDown)
+        if (Input.anyKeyDown)
         {
             AudioManager.Instance.StopSound("DarkForest");
             Transition.LoadLevel("MenuScene", 1.0f, Color.black);
-        }*/
+        }
     }
 }

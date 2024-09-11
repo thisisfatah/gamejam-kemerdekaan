@@ -97,8 +97,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af794284f117c7a44890c4bb5086506d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anim: {fileID: 5356915578628274022}
   health: 1
+  maxhealth: 1
+  durationFlash: 0.5
+  spriteRenderer: {fileID: 4111954978379129628}
+  flashMaterial: {fileID: 2100000, guid: 42c9a4126866381429cf4b9d0b0786b1, type: 2}
+  OnDieEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  anim: {fileID: 5356915578628274022}
   playerType: 1
   gameScene: {fileID: 0}
   isGameOver: 0

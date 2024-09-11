@@ -72,11 +72,8 @@ namespace RadioRevolt
 		{
 			if (collision.CompareTag("Enemy"))
 			{
-				Debug.Log("Test");
-
 				enemyTransform = collision.transform;
 				attack = true;
-				//collision.GetComponent<EnemyManager>().Attack(transform);
 			}
 
 			if (collision.CompareTag("Gate"))
@@ -84,7 +81,6 @@ namespace RadioRevolt
 				collision.gameObject.tag = "Untagged";
 
 				SpawnPlayer(collision.GetComponent<Player>());
-				//ObjectPoolManager.ReturnObjectToPool(collision.gameObject, ObjectPoolManager.PoolType.Player);
 			}
 
 		}

@@ -5,10 +5,13 @@ namespace RadioRevolt
 	public class GameScene : BaseScene
 	{
 		private bool isPause = false;
+		public bool IsGameOver {  get; private set; }
+
 		private void Start()
 		{
 			AudioManager.Instance.PlaySound("DarkForest");
 			PlayerPrefs.SetInt("Score", 0);
+			IsGameOver = false;
 		}
 
 		private void Update()
@@ -26,6 +29,12 @@ namespace RadioRevolt
 					CloseCurrentPopup();
 				}
 			}
+		}
+
+		public void EndGame()
+		{
+			IsGameOver = true;
+			OpenPopup<GameOverPopUp>("Popups/GameOverPopup");
 		}
 	}
 }

@@ -11,17 +11,16 @@ namespace RadioRevolt
 		Side
 	}
 
-	public class Player : MonoBehaviour
+	public class Player : CharacterRadioRevolt
 	{
 		public Animator anim;
 		private PlayerMovement playerMovement;
 		private PlayerManager playerManager;
 
-		[SerializeField] private int health;
 
 		[SerializeField] private PlayerType playerType;
 
-		[SerializeField] private GameScene gameScene;
+		private GameScene gameScene;
 
 		public bool isGameOver = false;
 
@@ -32,13 +31,15 @@ namespace RadioRevolt
 			if (transform.parent != null)
 			{
 				playerManager = transform.parent.GetComponent<PlayerManager>();
-				if(playerManager != null)
+				if (playerManager != null)
 				{
 					playerMovement = playerManager.GetComponent<PlayerMovement>();
 				}
 			}
 
 			gameScene = FindObjectOfType<GameScene>();
+
+			OnDieEvent.AddListener(OnKilled);
 		}
 
 		private void LateUpdate()
@@ -61,106 +62,27 @@ namespace RadioRevolt
 		{
 			if (playerManager == null) return;
 
-			/*if (playerType == PlayerType.Main)
-			{
-				if (collision.CompareTag("Red") && collision.transform.parent.childCount > 0)
-				{
-					int score = PlayerPrefs.GetInt("Score");
-					PlayerPrefs.SetInt("Score", score + 1);
-					GetDamage();
-					ObjectPoolManager.ReturnObjectToPool(collision.gameObject, ObjectPoolManager.PoolType.Enemy);
-				}
-				else if (collision.CompareTag("MiniBoss"))
-				{
-					EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-					enemyBehaviour.IncreaseHealth(1);
-					GetDamage();
-				}
-				else if (collision.CompareTag("Boss"))
-				{
-					EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-					enemyBehaviour.IncreaseHealth(1);
-					GetDamage();
-				}
-			}
-			else
-			{
-				if (collision.CompareTag("Red") && collision.transform.parent.childCount > 0)
-				{
-					ObjectPoolManager.ReturnObjectToPool(collision.gameObject, ObjectPoolManager.PoolType.Enemy);
-					ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Player);
-					int score = PlayerPrefs.GetInt("Score");
-					PlayerPrefs.SetInt("Score", score + 1);
-					player.virtualCamera.m_Lens.OrthographicSize -= 0.05f;
-				}
-				else if (collision.CompareTag("MiniBoss"))
-				{
-					EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-					enemyBehaviour.IncreaseHealth(1);
-					ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Player);
-				}
-				else if (collision.CompareTag("Boss"))
-				{
-					EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-					enemyBehaviour.IncreaseHealth(1);
-					ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Player);
-				}
-			}*/
-
 			if (collision.CompareTag("Enemy"))
 			{
-				int score = PlayerPrefs.GetInt("Score");
-				PlayerPrefs.SetInt("Score", score + 1);
-
 				EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
 				enemyBehaviour.IncreaseHealth(1);
 
-				GetDamage();
-
-				//Destroy(collision.gameObject);
-				//ObjectPoolManager.ReturnObjectToPool(collision.gameObject, ObjectPoolManager.PoolType.Enemy);
+				IncreaseHealth(1);
 			}
 		}
 
-		private void OnTriggerStay2D(Collider2D collision)
+		private void OnKilled()
 		{
-			//if (playerType == PlayerType.Main)
-			//{
-			//	if (collision.CompareTag("MiniBoss"))
-			//	{
-			//		EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-			//		enemyBehaviour.IncreaseHealth(1);
-			//		GetDamage();
-			//	}
-			//	else if (collision.CompareTag("Boss"))
-			//	{
-			//		EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
-			//		enemyBehaviour.IncreaseHealth(1);
-			//		GetDamage();
-			//	}
-			//}
-		}
-
-		private void GetDamage()
-		{
-			health--;
-
-			if (!isGameOver)
+			if (!gameScene.IsGameOver && playerType == PlayerType.Main)
 			{
-				if (health <= 0)
-				{
-					isGameOver = true;
-					ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Player);
-					ResetPlayer();
-
-					switch (playerType)
-					{
-						case PlayerType.Main:
-							gameScene.OpenPopup<GameOverPopUp>("Popups/GameOverPopup");
-							break;
-					}
-				}
+				gameScene.EndGame();
 			}
+            else
+            {
+				ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Player);
+				ResetPlayer();
+			}
+
 		}
 
 		private void ResetPlayer()
