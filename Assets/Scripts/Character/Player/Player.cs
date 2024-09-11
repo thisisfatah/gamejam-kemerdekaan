@@ -75,7 +75,7 @@ namespace RadioRevolt
 		{
 			if (!gameScene.IsGameOver && playerType == PlayerType.Main)
 			{
-				gameScene.EndGame();
+				gameScene.EndGame(false);
 			}
             else
             {

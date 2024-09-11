@@ -31,10 +31,10 @@ namespace RadioRevolt
 			}
 		}
 
-		public void EndGame()
+		public void EndGame(bool win)
 		{
 			IsGameOver = true;
-			OpenPopup<GameOverPopUp>("Popups/GameOverPopup");
+			OpenPopup<GameOverPopUp>("Popups/GameOverPopup", popup => popup.EndGame(win));
 		}
 	}
 }

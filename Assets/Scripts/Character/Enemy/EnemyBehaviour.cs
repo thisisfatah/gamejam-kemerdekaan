@@ -163,7 +163,7 @@ namespace RadioRevolt
 		{
 			if (!gameScene.IsGameOver && type == BossType.Boss)
 			{
-				gameScene.EndGame();
+				gameScene.EndGame(true);
 			}
 			Destroy(gameObject);
 			FullHealth();
