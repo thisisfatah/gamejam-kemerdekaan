@@ -1,1 +1,1 @@
-{"scoreGroups":[{"name":"Fatah​","score":"00:19"}]}
+{"scoreGroups":[{"name":"Fatah​","score":"00:19"},{"name":"Fatah​","score":"02:03"},{"name":"Fatah​","score":"04:23"}]}

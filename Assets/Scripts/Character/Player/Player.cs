@@ -67,6 +67,8 @@ namespace RadioRevolt
 				EnemyBehaviour enemyBehaviour = collision.GetComponent<EnemyBehaviour>();
 				enemyBehaviour.IncreaseHealth(1);
 
+				AudioManager.Instance.PlaySound("Hit");
+
 				IncreaseHealth(1);
 			}
 		}
@@ -75,6 +77,7 @@ namespace RadioRevolt
 		{
 			if (!gameScene.IsGameOver && playerType == PlayerType.Main)
 			{
+				Destroy(transform.parent.gameObject);
 				gameScene.EndGame(false);
 			}
             else

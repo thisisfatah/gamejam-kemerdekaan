@@ -13,9 +13,11 @@ namespace RadioRevolt
 
 		private PlayerManager _manager;
 
-		[HideInInspector] public Vector2 moveDir { get; private set;}
+		[HideInInspector] public Vector2 moveDir { get; private set; }
 
-		public bool IsFacingRight {  get; private set; }
+		public bool IsFacingRight { get; private set; }
+
+		private bool IsSoundPlay;
 
 
 		private void Awake()
@@ -30,12 +32,26 @@ namespace RadioRevolt
 		{
 			_rigid.AddForce(_moveSpeed * moveDir);
 
-			 for (int i = 0; i < transform.childCount; i++)
+			for (int i = 0; i < transform.childCount; i++)
 			{
 				if (moveDir.x != 0)
 					CheckDirectionToFace(moveDir.x > 0);
 			}
+			PlayAudio();
+		}
 
+		private void PlayAudio()
+		{
+			if (Mathf.Abs(_rigid.velocity.magnitude) > 0.5f && !IsSoundPlay)
+			{
+				IsSoundPlay = true;
+				AudioManager.Instance.PlaySound("FootStep");
+			}
+			else if (Mathf.Abs(_rigid.velocity.magnitude) < 0.5f && IsSoundPlay)
+			{
+				IsSoundPlay = false;
+				AudioManager.Instance.StopSound("FootStep");
+			}
 		}
 
 		void OnMove(InputValue value)

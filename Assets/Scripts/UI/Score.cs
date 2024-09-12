@@ -25,10 +25,11 @@ namespace RadioRevolt
 			time += Time.deltaTime;
 			PlayerPrefs.SetFloat("Time", time);
 
-			int Seconds = (int)(PlayerPrefs.GetFloat("Time") % 60);
-			int Minutes = (int)(PlayerPrefs.GetFloat("Time") / 60);
+			/*  */
+			//int Seconds = (int)(PlayerPrefs.GetFloat("Time") % 60);
+			//int Minutes = (int)(PlayerPrefs.GetFloat("Time") / 60);
 			
-			GetComponent<TextMeshProUGUI>().text = string.Format("{0:00}:{1:00}", Minutes, Seconds);
+			//GetComponent<TextMeshProUGUI>().text = string.Format("{0:00}:{1:00}", Minutes, Seconds);
 		}
 	}
 }

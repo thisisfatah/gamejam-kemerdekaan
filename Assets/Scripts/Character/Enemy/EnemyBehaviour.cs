@@ -44,13 +44,17 @@ namespace RadioRevolt
 		[SerializeField] private float maxDistance;
 		[SerializeField] private bool isBoss;
 
+		private void Awake()
+		{
+			gameScene = FindObjectOfType<GameScene>();
+		}
+
 		private void Start()
 		{
 			seeker = GetComponent<Seeker>();
 			rb = GetComponent<Rigidbody2D>();
 
 			playerManager = FindObjectOfType<PlayerManager>();
-			gameScene = FindObjectOfType<GameScene>();
 			IsFacingRight = true;
 
 			SetNewDistance();
@@ -144,6 +148,8 @@ namespace RadioRevolt
 
 		private Vector2 Destination()
 		{
+			if(target == null) return wayPoint;
+
 			if (Vector2.Distance(rb.position, (Vector2)target.position) < playerDistance)
 			{
 				return (Vector2)target.position;
@@ -161,12 +167,30 @@ namespace RadioRevolt
 
 		private void KilledEnemy()
 		{
-			if (!gameScene.IsGameOver && type == BossType.Boss)
+			switch (type)
 			{
-				gameScene.EndGame(true);
+				case BossType.MiniBoss:
+					gameScene.miniBossList.Remove(this);
+					break;
+				case BossType.Boss:
+					gameScene.bossList.Remove(this);
+					break;
 			}
 			Destroy(gameObject);
 			FullHealth();
+		}
+
+		public void InitScore()
+		{
+			switch (type)
+			{
+				case BossType.MiniBoss:
+					gameScene.miniBossList.Add(this);
+					break;
+				case BossType.Boss:
+					gameScene.bossList.Add(this);
+					break;
+			}
 		}
 	}
 

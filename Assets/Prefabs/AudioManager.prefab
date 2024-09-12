@@ -65,3 +65,13 @@ MonoBehaviour:
     volume: 1
     loop: 0
     source: {fileID: 0}
+  - name: FootStep
+    sound: {fileID: 8300000, guid: f2bef3426a6b488438a42e27d646a2a3, type: 3}
+    volume: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: Hit
+    sound: {fileID: 8300000, guid: 89c90fc5f5dbeb64a88c352b39dd1d63, type: 3}
+    volume: 1
+    loop: 0
+    source: {fileID: 0}

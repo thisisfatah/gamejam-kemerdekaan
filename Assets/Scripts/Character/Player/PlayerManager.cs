@@ -94,7 +94,7 @@ namespace RadioRevolt
 				float y = _distanceFactor * Mathf.Sqrt(i) * Mathf.Sin(i * _radius);
 
 				Vector2 newPos = new Vector2(x, y);
-				transform.GetChild(i).DOLocalMove(newPos, 0.5f).SetEase(Ease.OutBack);
+				transform.GetChild(i).DOLocalMove(newPos, 0.8f).SetEase(Ease.OutBack);
 
 				if (i == 0) continue;
 

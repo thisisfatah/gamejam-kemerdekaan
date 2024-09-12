@@ -22,6 +22,11 @@ namespace RadioRevolt
 			{
 				Vector3 offsetSpawn = new Vector3(Random.Range(-2, 2), Random.Range(-2, 2));
 				GameObject objectSpawn = ObjectPoolManager.SpawnObject(spawnGameObject[i], spawnTransform.position + offsetSpawn, Quaternion.identity, ObjectPoolManager.PoolType.Player);
+				EnemyBehaviour enemyBehaviour = objectSpawn.GetComponent<EnemyBehaviour>();
+				if (enemyBehaviour != null)
+				{
+					enemyBehaviour.InitScore();
+				}
 			}
 		}
 	}
